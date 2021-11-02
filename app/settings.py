@@ -38,8 +38,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
+    # REST Framework
     'rest_framework',
+    'rest_framework.authtoken',
+
+    # Django AllAuth
+    'allauth',
+    'allauth.account',
+
+    # DJ REST AUTH
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    # User Apps
+    'users.apps.UsersConfig',
 
     'django_extensions',
 ]
@@ -121,3 +135,63 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Additional Settings
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'users.serializers.LoginSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserDetailsSerializer',
+}
+
+REST_USE_JWT = True
+
+# DJ Rest Auth
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Email verification after registration
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+# Dj AllAuth - Activate email account after click on link
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+# allow logout using GET
+ACCOUNT_LOGOUT_ON_GET = True
+
+# JWT_AUTH_COOKIE is used while authenticating each request against protected views.
+JWT_AUTH_COOKIE = 'my-app-auth'
+
+JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+
+LOGIN_URL = 'http://localhost:8000/api/auth/login'
+
+# LOGOUT_URL = 'https://localhost:8000/api/auth/logout'
